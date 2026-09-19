@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#6ed4e8" />
+  <title>うみポケット</title>
+  <style>
+
+:root{
+  --ink:#153e5a;
+  --muted:#4d7189;
+  --aqua:#66d8e8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#dff7fb;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;color:var(--ink)}
+button{font:inherit}
+.app{width:min(100%,760px);margin:0 auto;min-height:100vh;background:#f9fdfe;overflow:hidden}
+.aquarium{
+  position:relative;
+  height:min(64vh,790px);
+  min-height:560px;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 50% -10%,rgba(255,255,255,.98),rgba(255,255,255,.25) 25%,transparent 52%),
+    linear-gradient(180deg,#9beef7 0%,#59cce0 28%,#168fb2 63%,#0a6a88 100%);
+}
+.surface{position:absolute;inset:0 0 auto;height:17%;background:linear-gradient(rgba(255,255,255,.6),transparent);filter:blur(1px)}
+.rays{position:absolute;inset:0;height:76%;background:repeating-conic-gradient(from 163deg at 50% 0,rgba(255,255,255,.18) 0 4deg,transparent 4deg 13deg);filter:blur(10px);opacity:.55}
+.topbar{position:absolute;z-index:30;top:calc(22px + env(safe-area-inset-top));left:30px;right:27px;display:flex;justify-content:space-between;align-items:flex-start}
+.brand{color:#fff;font-size:29px;font-weight:750;letter-spacing:.04em;text-shadow:0 2px 8px rgba(0,80,100,.18)}
+.wave{width:46px;height:10px;border-bottom:4px solid white;border-radius:50%;margin-left:72px;transform:rotate(-7deg)}
+.round-btn{width:58px;height:58px;border-radius:50%;border:2px solid rgba(255,255,255,.72);background:rgba(55,160,188,.18);backdrop-filter:blur(8px);display:grid;grid-template-columns:6px 6px;gap:8px;place-content:center;padding:0}
+.round-btn span{display:block;width:6px;height:24px;border-radius:6px;background:white}
+.round-btn.play{grid-template-columns:1fr}
+.round-btn.play span:first-child{width:0;height:0;background:none;border-top:12px solid transparent;border-bottom:12px solid transparent;border-left:20px solid white;border-radius:0;margin-left:5px}
+.round-btn.play span:last-child{display:none}
+
+.sand{position:absolute;left:-5%;right:-5%;bottom:-4%;height:28%;background:radial-gradient(ellipse at 40% 10%,rgba(255,255,255,.85),transparent 30%),linear-gradient(#f7f0d7,#ded1a8);border-radius:50% 50% 0 0/18% 18% 0 0;z-index:2}
+.reef{position:absolute;bottom:7%;z-index:4;width:32%;height:28%;filter:drop-shadow(0 8px 8px rgba(0,55,70,.15))}
+.reef:before,.reef:after{content:"";position:absolute;bottom:0;border-radius:50% 50% 20% 20%}
+.reef-left{left:-5%}
+.reef-right{right:-7%}
+.reef:before{left:0;width:78%;height:52%;background:linear-gradient(135deg,#324d47,#70806e)}
+.reef:after{left:36%;width:55%;height:74%;background:
+  radial-gradient(circle at 20% 20%,#d5a696 0 3%,transparent 4%),
+  radial-gradient(circle at 45% 38%,#d5a696 0 3%,transparent 4%),
+  radial-gradient(circle at 70% 26%,#d5a696 0 3%,transparent 4%),
+  linear-gradient(130deg,#d59e8d,#e0b7a4 45%,#7ab58a 46%,#619f78)}
+
+.animal{position:absolute;z-index:15;border:0;background:none;padding:0;line-height:1;cursor:pointer;filter:drop-shadow(0 10px 10px rgba(0,70,90,.18));transition:filter .2s,transform .2s}
+.animal:focus-visible{outline:2px solid white;outline-offset:3px;border-radius:30px}
+.animal.selected{filter:drop-shadow(0 0 10px rgba(255,255,255,.9)) drop-shadow(0 10px 10px rgba(0,70,90,.18))}
+.whale-shark{font-size:150px;left:3%;top:16%;transform:scaleX(1.85) scaleY(1.05);animation:driftBig 8s ease-in-out infinite}
+.turtle{font-size:112px;right:10%;top:53%;animation:driftTurtle 7s ease-in-out infinite}
+.clown{font-size:58px}
+.c1{left:8%;top:51%;animation:driftSmall 5.5s ease-in-out infinite}
+.c2{left:21%;top:59%;font-size:48px;animation:driftSmall 6.2s ease-in-out -1s infinite}
+.tang{left:31%;top:54%;font-size:55px;filter:hue-rotate(170deg) saturate(1.2);animation:driftSmall 6.8s ease-in-out -.6s infinite}
+.jelly{right:2%;top:45%;font-size:82px;animation:jelly 5.8s ease-in-out infinite}
+.manta{right:23%;top:42%;font-size:90px;color:#5b7e8f;font-weight:900;transform:rotate(-8deg) scaleX(1.5);animation:manta 7.4s ease-in-out infinite}
+.seahorse{left:27%;top:72%;font-size:55px;color:#e0a64a;transform:rotate(-12deg);animation:seahorse 5.8s ease-in-out infinite}
+
+@keyframes driftBig{50%{transform:translate(12px,-7px) scaleX(1.85) scaleY(1.05) rotate(-1deg)}}
+@keyframes driftTurtle{50%{transform:translate(-12px,-12px) rotate(2deg)}}
+@keyframes driftSmall{50%{transform:translate(17px,-6px) rotate(-2deg)}}
+@keyframes jelly{50%{transform:translate(-8px,-17px) scaleY(1.04)}}
+@keyframes manta{50%{transform:translate(-16px,8px) rotate(-10deg) scaleX(1.5)}}
+@keyframes seahorse{50%{transform:translateY(-12px) rotate(-8deg)}}
+.paused .animal{animation-play-state:paused}
+
+.bubbles{position:absolute;z-index:5;width:9px;height:9px;border-radius:50%;border:1px solid rgba(255,255,255,.7);box-shadow:18px 75px 0 -1px rgba(255,255,255,.35),-5px 150px 0 2px rgba(255,255,255,.28),13px 235px 0 0 rgba(255,255,255,.3),-2px 320px 0 3px rgba(255,255,255,.2);animation:bubble 9s linear infinite}
+.b1{left:4%;bottom:9%}.b2{right:10%;bottom:3%;animation-delay:-2.5s}.b3{left:46%;bottom:0;animation-delay:-5s}
+@keyframes bubble{to{transform:translateY(-560px);opacity:0}}
+
+.info-card{position:relative;z-index:40;margin-top:-1px;padding:40px 44px 32px;background:linear-gradient(135deg,#ffffff,#eef9fb);min-height:390px}
+.headline-row{display:grid;grid-template-columns:minmax(0,1fr) 145px;gap:18px}
+h1{font-size:47px;line-height:1.08;margin:0;letter-spacing:.04em}
+#speciesDesc{margin:20px 0 26px;font-size:24px;color:#3d6785;letter-spacing:.04em}
+.meta{border-top:1px solid #c9dfe6;padding-top:18px;display:grid;grid-template-columns:118px 1fr;align-items:center;font-size:20px}
+.meta span{color:#6592aa;font-weight:700}.meta strong{font-weight:500;color:#56768a}
+.seaweed{position:relative;height:166px;opacity:.62}
+.seaweed:after{content:"";position:absolute;right:7px;bottom:4px;width:115px;height:24px;background:#cce6ea;border-radius:60%}
+.seaweed i{position:absolute;bottom:20px;right:55px;width:14px;height:118px;border-radius:100% 0;background:#6ec9ce;transform-origin:bottom}
+.seaweed i:nth-child(1){transform:rotate(-28deg);height:93px}.seaweed i:nth-child(2){transform:rotate(5deg);height:130px}.seaweed i:nth-child(3){transform:rotate(33deg);height:106px}
+.strip-head{display:flex;justify-content:space-between;align-items:center;margin-top:28px}.strip-head span{flex:1}.text-btn{border:0;background:none;color:#3e6078;font-size:18px;padding:8px 0}.text-btn b{font-size:30px;font-weight:400;vertical-align:-2px}
+.species-strip{display:flex;gap:14px;overflow-x:auto;padding:10px 2px 5px;scrollbar-width:none}.species-strip::-webkit-scrollbar{display:none}
+.chip{flex:0 0 92px;border:0;background:none;color:#355a72;padding:0}.chip .emoji{display:grid;place-items:center;height:60px;font-size:47px;transition:transform .2s}.chip small{display:block;font-size:13px;font-weight:700;white-space:nowrap}.chip.active .emoji{transform:translateY(-4px) scale(1.1)}.chip.active small{color:#124d6c}
+
+dialog{width:min(92%,640px);border:0;border-radius:24px;padding:24px;background:#f8fdfe;color:var(--ink);box-shadow:0 24px 80px rgba(0,45,65,.28)}
+dialog::backdrop{background:rgba(5,47,66,.44);backdrop-filter:blur(6px)}
+.dialog-head{display:flex;justify-content:space-between;align-items:center}.dialog-head h2{margin:0;font-size:28px}.close-btn{border:0;background:#e8f5f8;border-radius:50%;width:42px;height:42px;font-size:30px;color:#315a71}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}.grid .chip{background:white;border-radius:18px;padding:14px;width:100%;box-shadow:0 8px 18px rgba(33,105,126,.08)}
+
+@media (max-width:560px){
+  .aquarium{height:64vh;min-height:510px}
+  .topbar{left:22px;right:20px}.brand{font-size:24px}.round-btn{width:53px;height:53px}
+  .info-card{padding:34px 28px 28px}.headline-row{grid-template-columns:minmax(0,1fr) 95px}
+  h1{font-size:39px}#speciesDesc{font-size:20px;margin:18px 0 22px}.meta{grid-template-columns:86px 1fr;font-size:17px}
+  .seaweed{height:138px}.species-strip{gap:9px}.chip{flex-basis:82px}
+  .whale-shark{font-size:112px;left:-2%;top:18%}
+  .turtle{font-size:88px;right:5%;top:55%}
+  .jelly{font-size:70px}.manta{font-size:72px}
+}
+
+</style>
+</head>
+<body>
+  <main class="app" id="app">
+    <section class="aquarium" id="aquarium">
+      <div class="surface"></div>
+      <div class="rays"></div>
+      <div class="reef reef-left"></div>
+      <div class="reef reef-right"></div>
+      <div class="sand"></div>
+
+      <header class="topbar">
+        <div class="brand">うみポケット<div class="wave"></div></div>
+        <button id="pauseBtn" class="round-btn" aria-label="泳ぎを一時停止"><span></span><span></span></button>
+      </header>
+
+      <button class="animal whale-shark" data-species="whale" aria-label="ジンベエザメ">🐋</button>
+      <button class="animal turtle" data-species="turtle" aria-label="アオウミガメ">🐢</button>
+      <button class="animal clown c1" data-species="clown" aria-label="カクレクマノミ">🐠</button>
+      <button class="animal clown c2" data-species="clown" aria-label="カクレクマノミ">🐠</button>
+      <button class="animal tang" data-species="tang" aria-label="ナンヨウハギ">🐟</button>
+      <button class="animal manta" data-species="manta" aria-label="マンタ">〰</button>
+      <button class="animal jelly" data-species="jelly" aria-label="ミズクラゲ">🪼</button>
+      <button class="animal seahorse" data-species="seahorse" aria-label="タツノオトシゴ">♞</button>
+
+      <div class="bubbles b1"></div>
+      <div class="bubbles b2"></div>
+      <div class="bubbles b3"></div>
+    </section>
+
+    <section class="info-card">
+      <div class="headline-row">
+        <div>
+          <h1 id="speciesTitle">アオウミガメ</h1>
+          <p id="speciesDesc">海草が大好きな、のんびり屋。</p>
+          <div class="meta">
+            <span>すみか</span>
+            <strong id="speciesHome">暖かい沿岸の海</strong>
+          </div>
+        </div>
+        <div class="seaweed" aria-hidden="true">
+          <i></i><i></i><i></i>
+        </div>
+      </div>
+
+      <div class="strip-head">
+        <span></span>
+        <button id="allBtn" class="text-btn">全7種 <b>›</b></button>
+      </div>
+
+      <div class="species-strip" id="speciesStrip"></div>
+    </section>
+
+    <dialog id="allDialog">
+      <div class="dialog-head">
+        <h2>うみのなかまたち</h2>
+        <button id="closeDialog" class="close-btn">×</button>
+      </div>
+      <div class="grid" id="speciesGrid"></div>
+    </dialog>
+  </main>
+
+  <script>
+
+const species = {
+  whale: { name:"ジンベエザメ", emoji:"🐋", desc:"大きな体で、ゆったり泳ぐ海の巨人。", home:"暖かい外洋" },
+  turtle:{ name:"アオウミガメ", emoji:"🐢", desc:"海草が大好きな、のんびり屋。", home:"暖かい沿岸の海" },
+  clown: { name:"カクレクマノミ", emoji:"🐠", desc:"イソギンチャクのそばが落ち着く、小さな人気者。", home:"サンゴ礁の浅い海" },
+  jelly: { name:"ミズクラゲ", emoji:"🪼", desc:"水の流れに身をまかせる、透明なふわふわ。", home:"沿岸の穏やかな海" },
+  tang:  { name:"ナンヨウハギ", emoji:"🐟", desc:"青い体がきらりと目立つ、すばしっこい魚。", home:"熱帯のサンゴ礁" },
+  manta: { name:"マンタ", emoji:"〰", desc:"大きな翼のようなヒレで、空を飛ぶように泳ぐ。", home:"暖かい外洋" },
+  seahorse:{ name:"タツノオトシゴ", emoji:"♞", desc:"しっぽでつかまって休む、不思議な小さな魚。", home:"海草やサンゴのある浅瀬" }
+};
+
+const order = ["whale","turtle","clown","jelly","tang","manta","seahorse"];
+const title = document.querySelector("#speciesTitle");
+const desc = document.querySelector("#speciesDesc");
+const home = document.querySelector("#speciesHome");
+const strip = document.querySelector("#speciesStrip");
+const grid = document.querySelector("#speciesGrid");
+const aquarium = document.querySelector("#aquarium");
+const pauseBtn = document.querySelector("#pauseBtn");
+const dialog = document.querySelector("#allDialog");
+
+function makeChip(key){
+  const s = species[key];
+  const btn = document.createElement("button");
+  btn.className = "chip";
+  btn.dataset.species = key;
+  btn.innerHTML = `<span class="emoji">${s.emoji}</span><small>${s.name}</small>`;
+  btn.addEventListener("click", () => {
+    select(key);
+    if (dialog.open) dialog.close();
+  });
+  return btn;
+}
+
+order.forEach(k => strip.appendChild(makeChip(k)));
+order.forEach(k => grid.appendChild(makeChip(k)));
+
+function select(key){
+  const s = species[key];
+  title.textContent = s.name;
+  desc.textContent = s.desc;
+  home.textContent = s.home;
+  document.querySelectorAll(".chip").forEach(el => el.classList.toggle("active", el.dataset.species === key));
+  document.querySelectorAll(".animal").forEach(el => el.classList.toggle("selected", el.dataset.species === key));
+}
+
+document.querySelectorAll(".animal").forEach(el => {
+  el.addEventListener("click", () => select(el.dataset.species));
+});
+
+pauseBtn.addEventListener("click", () => {
+  const paused = aquarium.classList.toggle("paused");
+  pauseBtn.classList.toggle("play", paused);
+  pauseBtn.setAttribute("aria-label", paused ? "泳ぎを再開" : "泳ぎを一時停止");
+});
+
+document.querySelector("#allBtn").addEventListener("click", () => dialog.showModal());
+document.querySelector("#closeDialog").addEventListener("click", () => dialog.close());
+dialog.addEventListener("click", e => {
+  const r = dialog.getBoundingClientRect();
+  if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) dialog.close();
+});
+
+select("turtle");
+
+</script>
+</body>
+</html>
